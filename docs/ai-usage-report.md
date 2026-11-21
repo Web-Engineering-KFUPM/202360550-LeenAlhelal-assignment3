@@ -1,48 +1,64 @@
-# AI Usage Report
-
-## AI Tools Used
-
-I used ChatGPT and Claude during the development of this assignment.
-
-## ChatGPT and Claude
-I used ChatGPT to generate the code for the features. ChatGPT produced errors, and struggled with recognizing them.
-For example: the filteration section I added was not working. The accessibility feature was shown on the website, but 
-did not respond to clicks. 
-I then used Claude to identify the errors, and it did so immediately. The mistake ended up being a missing bracket.
-
-## How I Used AI Output
-
-After fixing all the errors based on Claude, I made sure all the features worked and that I understood all the codes.
-
-## Declaration
-
-Name: Leen Alhelal 
-Student ID: 202360550
-Date: Sun 25 Oct
-
-# AI Usage Report
-
-## 1. Usage Log
-
-| Tool           | Date | Purpose | Files Affected | What I Changed and how I Verified It                                                                                                                                          |
-|----------------|---|---|---|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ChatGPT (GPT-6) | October 25, 2026 | project status filtering | HTML file, `css/styles.css`, `js/script.js` | Added a filter for All, Ongoing, and Completed projects. Tested the filter (using the inspect tool in chrome) and fixed a CSS syntax error by adding a missing closing brace. |
-| ChatGPT (GPT-6) | October 25, 2026 | accessibility customization | HTML file, `css/styles.css`, `js/script.js` | Added controls for text size, line spacing, contrast, and content width. Tested the controls.                                                                                 |
-| ChatGPT (GPT-6) | October 25, 2026 | Contact form validation and feedback | HTML file, `js/script.js` | Tested empty submissions and invalid email addresses. The form displays a confirmation message explaining that it is a demo and does not send messages anywhere.              |
-| Claude  | October 25, 2026 | Debugging | `css/styles.css`, `js/script.js` | Used Claude  to troubleshoot.                                                                                                                                                 |
-| ChatGPT (GPT-6) | October 25, 2026 | Updating project documentation | `README.md` | Updated the README to document the project and its features. I asked AI for a structure and I filled things in.                                                               |
+# AI Usage Report – Assignment 3
 
 
-## 2. Declaration
+---
 
-I declare that this report and the attached evidence document all of my AI use in this assignment, with complete and unedited conversations, 
-and that I understand and can explain all the code I submitted. I understand that undeclared AI use or a false declaration will be treated as 
-plagiarism according to KFUPM regulations.
+## 1. Tools Used & Use Cases
 
-Name: Leen Nasser Alhelal
+| Tool (model) | How I used it |
+|---|---|
+| Claude (Opus 5.5), claude.ai | Step-by-step tutor and coding assistant: brainstorming which public API to use; explaining how APIs, `fetch`, `async/await`, and JSON responses work; generating and explaining the project pop-ups, the weather feature, and the contact form validation; reviewing my project structure; explaining Lighthouse and Core Web Vitals; drafting the documentation |
 
-Student ID: 202360550
 
-Date: October 25, 2026
+---
 
-Signature: Leen Alhelal
+## 2. Benefits & Challenges
+
+**Benefits**
+
+**Challenges / limitations**
+- some explanations were too complicated at first, and I had to ask for a simpler version._
+- the AI wrote a URL from memory, so I rebuilt it myself from the official Open-Meteo docs._
+- gave me the direct link to the API, and it had trouble giving me a simplistic method of accessing APIs
+
+---
+
+## 3. Learning Outcomes
+
+How to choose a public API: why API keys can't be hidden in a frontend-only public repo; `fetch` + `response.ok` + `try/catch/finally`; the native `<dialog>` element; regular expressions (`\p{L}`); `aria-describedby` / `aria-invalid`; why client-side validation must be repeated on a backend; Lighthouse and Core Web Vitals; caching with a timestamp._
+
+---
+
+## 4. Responsible Use & Modifications
+
+- I asked where the API URL came from, and rebuilt it myself with the official Open-Meteo URL builder.
+- I asked for sources for the AI's explanation of the API response. When checked against the docs, the `interval` explanation turned out to be imprecise and was corrected.
+- I checked the weather-code lists against the WMO table in the Open-Meteo docs.
+- I asked for line-by-line explanations of the form validation code before using it.
+- I rejected suggestions that didn't fit my portfolio (reading-related ideas, GitHub repository features).
+- I wrote the project descriptions in the pop-ups myself. 
+- I tested every feature in the browser: pop-ups (✕, Esc, click outside, keyboard), the API error message (by breaking the URL on purpose), form validation cases, dark and high-contrast mode, and Lighthouse.
+- I made some changes to the HTML file eg. lists, paragraphs, to better structure the website 
+
+---
+
+## 5. Usage Log
+
+| ID | Tool (model) | Date | Purpose | Files affected | What you changed and how you verified it                                                                                                                          |
+|----|--------------|------|---------|----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| C01 | Claude (Opus 5.5) | 2026-11-20 – 2026-11-21 | Choosing an API; building the weather feature, project pop-ups, and contact form validation; fixing project structure; Lighthouse; documentation drafts | `index.html`, `js/script.js`, `css/styles.css`, `.gitignore`, `README.md`, `docs/*` | Rebuilt the API URL from the official docs; checked weather codes against the WMO table; tested all features in Chrome; ran Lighthouse (mobile 99/100/100/100). _ |
+| A01 | Claude (Opus 5.5) | 2026-11-21 | Generated `index.html` with "Learn more" buttons and two `<dialog>` pop-ups | `index.html` | Replaced placeholder text with my own project descriptions. Tested opening/closing with mouse and keyboard.                                                       |
+| A02 | Claude (Opus 5.5) | 2026-11-21 | Generated JS for the pop-ups, Open-Meteo weather, and walking-condition rules | `js/script.js` | Asked for a fix for stale data (15-minute refresh). Verified codes against the docs. Tested the error message by breaking the URL.                                |
+| A03 | Claude (Opus 5.5) | 2026-11-21 | Generated CSS for the pop-ups, weather panel, and form errors | `css/styles.css` | Checked in light, dark, and high-contrast modes.                                                                                                                  |
+| A04 | Claude (Opus 5.5) | 2026-11-21 | Generated contact form validation (HTML, JS, CSS) | `index.html`, `js/script.js`, `css/styles.css` | Asked for a line-by-line explanation. Tested empty fields, a too-short name, an invalid email, and a short message.                                               |
+| A05 | Claude (Opus 5.5) | 2026-11-21 | Drafted the README, technical documentation, and this report template | `README.md`, `docs/technical-documentation.md`, `docs/ai-usage-report.md` | _Let AI draft the template and I made changes and edits and wrote what I did                                                                                      |
+
+---
+
+## 6. Declaration
+
+> I declare that this report and the attached evidence document all of my AI use in this assignment, with complete and unedited conversations, and that I understand and can explain all the code I submitted. I understand that undeclared AI use or a false declaration will be treated as plagiarism according to KFUPM regulations.
+
+**Name:** Leen Alhelal
+**Student ID:** 202360550
+**Date:** 21 Nov 2026
