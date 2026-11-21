@@ -78,22 +78,138 @@ applyTheme(getInitialTheme());
 
 
 /* --------------------------------------------------------------------------
-   2. CONTACT FORM
+   2. CONTACT FORM (validation updated in Assignment 3)
 
-   There is no backend, so nothing is really sent. When the form is submitted
-   we stop the page from reloading and show a message instead.
-   The browser has already checked the required fields (and the email format)
-   before this code runs.
-
-   Later, you could replace this with code that sends the data to a service.
+   There is no backend, so nothing is really sent.
+   Steps when the visitor clicks "Send message":
+   1. Check every field with its own rules.
+   2. If any field fails: show the errors and move focus to the first wrong field.
+   3. Only if ALL fields pass: show the thank-you message and clear the form.
    -------------------------------------------------------------------------- */
 
 const contactForm = document.getElementById("contact-form");
 const formStatus = document.getElementById("form-status");
 
+const nameInput = document.getElementById("contact-name");
+const emailInput = document.getElementById("contact-email");
+const messageInput = document.getElementById("contact-message");
+
+const MESSAGE_MIN_LENGTH = 10;
+const MESSAGE_MAX_LENGTH = 1000;
+
+// Each check function returns an error message, or "" (empty) if the value is fine.
+
+function checkName(value) {
+  const name = value.trim();   // trim() removes spaces at the start and end
+
+  if (name === "") {
+    return "Please enter your name.";
+  }
+
+  if (name.length < 2) {
+    return "Your name must be at least 2 characters.";
+  }
+
+  // \p{L} means "any letter in any language", so Arabic names work too.
+  if (!/^[\p{L}\s'-]+$/u.test(name)) {
+    return "Your name can only contain letters, spaces, hyphens (-) and apostrophes (').";
+  }
+
+  return "";
+}
+
+function checkEmail(value) {
+  const email = value.trim();
+
+  if (email === "") {
+    return "Please enter your email address.";
+  }
+
+  // Something @ something . at least 2 letters, with no spaces (e.g. name@example.com)
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+    return "This email doesn't look right. Use a format like name@example.com.";
+  }
+
+  return "";
+}
+
+function checkMessage(value) {
+  const message = value.trim();
+
+  if (message === "") {
+    return "Please write a message.";
+  }
+
+  if (message.length < MESSAGE_MIN_LENGTH) {
+    return `Your message must be at least ${MESSAGE_MIN_LENGTH} characters (currently ${message.length}).`;
+  }
+
+  if (message.length > MESSAGE_MAX_LENGTH) {
+    return `Your message must be ${MESSAGE_MAX_LENGTH} characters or fewer (currently ${message.length}).`;
+  }
+
+  return "";
+}
+
+// Connects each input to its check function.
+const formFields = [
+  { input: nameInput, check: checkName },
+  { input: emailInput, check: checkEmail },
+  { input: messageInput, check: checkMessage }
+];
+
+// Checks one field and shows or clears its error. Returns true if the field is valid.
+function validateField(field) {
+  const errorMessage = field.check(field.input.value);
+  const errorElement = document.getElementById(`${field.input.id}-error`);
+
+  errorElement.textContent = errorMessage;
+
+  // aria-invalid tells screen readers the field has a problem (and our CSS colours it red).
+  if (errorMessage) {
+    field.input.setAttribute("aria-invalid", "true");
+  } else {
+    field.input.removeAttribute("aria-invalid");
+  }
+
+  return errorMessage === "";
+}
+
+formFields.forEach((field) => {
+  // When the visitor leaves a field, check it (so they don't wait until submit).
+  field.input.addEventListener("blur", () => {
+    if (field.input.value.trim() !== "") {
+      validateField(field);
+    }
+  });
+
+  // While they type in a field that already has an error, re-check it
+  // so the error disappears as soon as it is fixed.
+  field.input.addEventListener("input", () => {
+    if (field.input.getAttribute("aria-invalid") === "true") {
+      validateField(field);
+    }
+  });
+});
+
 contactForm.addEventListener("submit", function (event) {
   event.preventDefault();   // stops the normal form behaviour (page reload)
 
+  // Step 1: check every field (map runs validateField on all of them, even after one fails)
+  const results = formFields.map((field) => validateField(field));
+  const errorCount = results.filter((isValid) => !isValid).length;
+
+  // Step 2: if anything failed, explain and move focus to the first wrong field
+  if (errorCount > 0) {
+    formStatus.textContent =
+      `Please fix ${errorCount} ${errorCount === 1 ? "field" : "fields"} before sending.`;
+
+    const firstInvalid = formFields.find((field, index) => !results[index]);
+    firstInvalid.input.focus();
+    return;
+  }
+
+  // Step 3: everything passed
   formStatus.textContent = "Thank you! This is a demo form, so your message was not sent anywhere.";
   contactForm.reset();      // clears the fields
 });

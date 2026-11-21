@@ -258,24 +258,14 @@
             </div>
 
             <h3>The problem</h3>
-            <p>Blind pedestrians in Boston face barriers that make walking unsafe, such as broken sidewalks and
-                non-compliant curb ramps. Mainstream navigation apps make this worse: they prioritize the
-                fastest route, give little accessibility information, and are split across several complex apps. </p>
+            <p>Write in your own words: what problem blind pedestrians face.</p>
 
             <h3>How it works</h3>
-            <p>The system models Boston's sidewalks as a weighted graph, where each sidewalk segment's weight is its distance.
-                Segments with barriers, such as damaged curb ramps, get extra penalties. Weather APIs also add penalties when
-                it's snowing. A shortest-path algorithm (A*) then picks the route with the lowest total weight, avoiding barriers
-                even if the route is slightly longer.</p>
+            <p>Write: how your planner picks a route (obstacles, construction, crossings, surfaces).</p>
 
             <h3>Technologies</h3>
             <ul>
-                <li>Mobile app: React Native (JavaScript), with built-in screen-reader support</li>
-                <li>Backend / API: Node.js and Express</li>
-                <li>Database: MongoDB, to store barrier and condition data</li>
-                <li>Routing: Python and NetworkX, to build the weighted graph and run A*</li>
-                <li>Map data: OpenStreetMap, for the sidewalk network</li>
-                <li>Weather: a weather API, such as the National Weather Service API, for snow conditions</li>
+                <li>List the tools/languages you use</li>
             </ul>
 
             <!-- Live weather demo. Filled in by loadWeather() in js/script.js -->
@@ -299,16 +289,10 @@
             </div>
 
             <h3>What it does</h3>
-            <p>A desktop application developed using JavaFX and SQL to manage gym operations and records.
-                The system organizes gym-related information through a graphical interface and database integration.</p>
+            <p>Write: what the system manages (members, records, ...).</p>
 
             <h3>What I learned</h3>
-            <ul>
-                <li>Applying object-oriented programming principles to structure and organize an application.</li>
-                <li>Developing graphical user interfaces using JavaFX.</li>
-                <li>Integrating SQL databases to store, retrieve, and manage data.</li>
-                <li>Connecting the application's interface with database operations.</li>
-            </ul>
+            <p>Write: OOP, JavaFX GUI, SQL database integration.</p>
         </div>
     </dialog>
 
@@ -321,27 +305,34 @@
             </p>
 
             <!-- There is no backend, so this form does not send data anywhere yet.
-                 js/script.js handles the submit event and shows a confirmation message. -->
-            <form id="contact-form" class="contact-form">
+                 js/script.js checks every field and shows a confirmation message.
+                 "novalidate" turns off the browser's own pop-up bubbles so our
+                 clearer, screen-reader-friendly messages are used instead. -->
+            <form id="contact-form" class="contact-form" novalidate>
 
                 <!-- Each label's "for" matches its input's "id".
-                     This lets screen readers announce the label and makes the label clickable. -->
+                     This lets screen readers announce the label and makes the label clickable.
+                     aria-describedby links each input to its error message, so a screen reader
+                     reads the error when the field gets focus. -->
                 <div class="form-group">
                     <label class="form-label" for="contact-name">Name</label>
                     <input class="form-input" type="text" id="contact-name" name="name"
-                           autocomplete="name" required>
+                           autocomplete="name" required aria-describedby="contact-name-error">
+                    <p id="contact-name-error" class="field-error"></p>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label" for="contact-email">Email</label>
                     <input class="form-input" type="email" id="contact-email" name="email"
-                           autocomplete="email" required>
+                           autocomplete="email" required aria-describedby="contact-email-error">
+                    <p id="contact-email-error" class="field-error"></p>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label" for="contact-message">Message</label>
                     <textarea class="form-input form-textarea" id="contact-message" name="message"
-                              rows="5" required></textarea>
+                              rows="5" required aria-describedby="contact-message-error"></textarea>
+                    <p id="contact-message-error" class="field-error"></p>
                 </div>
 
                 <button class="button button-primary" type="submit">Send message</button>
