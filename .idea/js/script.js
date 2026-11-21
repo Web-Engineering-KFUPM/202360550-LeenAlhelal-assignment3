@@ -4,6 +4,8 @@
    1. Dark / light mode toggle (the main interactive feature)
    2. Contact form confirmation message (no backend yet)
    3. Current year in the footer
+   Assignment 2: project filter, accessibility customization
+   Assignment 3: project detail pop-ups, live weather (Open-Meteo API)
    ========================================================================== */
 
 
@@ -336,20 +338,194 @@ if (
             true
         );
     });
+}
 
-    // Fetch current Boston weather from Open-Meteo and show it in the Route Planner card
-    async function loadWeather() {
-      const url = "https://api.open-meteo.com/v1/forecast?latitude=42.3584&longitude=-71.0598&current=temperature_2m,precipitation,weather_code,wind_speed_10m&timezone=America%2FNew_York";
 
-      const response = await fetch(url);
-      const data = await response.json();
+/* ==========================================================================
+   ASSIGNMENT 3: PROJECT DETAIL POP-UPS
+   ========================================================================== */
 
-      const temp = data.current.temperature_2m;
-      const wind = data.current.wind_speed_10m;
+// Each "Learn more" button stores the id of its pop-up in data-dialog.
+const moreButtons = document.querySelectorAll("[data-dialog]");
 
-      document.getElementById("weather-text").textContent =
-        `Boston right now: ${temp}°C, wind ${wind} km/h`;
+moreButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+        const dialog = document.getElementById(button.dataset.dialog);
+
+        // showModal() opens the pop-up, darkens the page behind it,
+        // and keeps keyboard focus inside it. Esc closes it automatically.
+        dialog.showModal();
+
+        // Only the Route Planner pop-up shows the weather.
+        if (dialog.id === "route-planner-dialog") {
+            loadWeather();
+        }
+    });
+});
+
+document.querySelectorAll(".project-dialog").forEach((dialog) => {
+    // Close with the ✕ button.
+    dialog.querySelector(".dialog-close").addEventListener("click", () => {
+        dialog.close();
+    });
+
+    // Close when the visitor clicks the dark area outside the box.
+    // The content is inside .dialog-inner, so a click whose target is the
+    // <dialog> itself can only be a click on the backdrop.
+    dialog.addEventListener("click", (event) => {
+        if (event.target === dialog) {
+            dialog.close();
+        }
+    });
+});
+
+
+/* ==========================================================================
+   ASSIGNMENT 3: LIVE WEATHER (Open-Meteo API)
+   Shows current Boston conditions and what they mean for blind pedestrians.
+   ========================================================================== */
+
+// URL built with the Open-Meteo docs URL builder (open-meteo.com/en/docs)
+const WEATHER_URL = "https://api.open-meteo.com/v1/forecast?latitude=42.3584&longitude=-71.0598&current=temperature_2m,precipitation,weather_code,wind_speed_10m&timezone=America%2FNew_York";
+
+// Set to true once a request starts, so reopening the pop-up does not call the API again.
+let weatherRequested = false;
+
+async function loadWeather() {
+    if (weatherRequested) {
+        return;
     }
 
-    loadWeather();
+    weatherRequested = true;
+
+    const content = document.getElementById("weather-content");
+
+    try {
+        const response = await fetch(WEATHER_URL);
+
+        // fetch() does NOT fail on HTTP errors like 404 or 500, so we check ourselves.
+        if (!response.ok) {
+            throw new Error(`HTTP error ${response.status}`);
+        }
+
+        const data = await response.json();
+        const current = data.current;
+        const assessment = assessWalkingConditions(current);
+
+        content.innerHTML = `
+            <div class="weather-status weather-${assessment.level}">
+                <p class="weather-status-title">
+                    <span aria-hidden="true">${assessment.icon}</span> ${assessment.title}
+                </p>
+                <p>${assessment.message}</p>
+            </div>
+
+            <ul class="weather-stats">
+                <li>
+                    <span class="stat-value">${current.temperature_2m}°C</span>
+                    <span class="stat-label">Temperature</span>
+                </li>
+                <li>
+                    <span class="stat-value">${current.wind_speed_10m} km/h</span>
+                    <span class="stat-label">Wind</span>
+                </li>
+                <li>
+                    <span class="stat-value">${current.precipitation} mm</span>
+                    <span class="stat-label">Precipitation (last 15 min)</span>
+                </li>
+            </ul>
+
+            <p class="weather-note">
+                My route planner would consider conditions like these when choosing the safest route.
+            </p>
+        `;
+    } catch (error) {
+        console.error("Weather request failed:", error);
+
+        // Allow another try the next time the pop-up is opened.
+        weatherRequested = false;
+
+        content.innerHTML = `
+            <p class="weather-error">
+                Sorry, live weather isn't available right now. Please try again later.
+            </p>
+        `;
+    }
+}
+
+// Decides how difficult walking is for a blind pedestrian.
+// Rules are checked from most serious to least serious; the first match wins.
+// Weather codes come from the WMO table in the Open-Meteo docs.
+function assessWalkingConditions(current) {
+    const code = current.weather_code;
+    const temp = current.temperature_2m;
+    const wind = current.wind_speed_10m;
+    const precipitation = current.precipitation;
+
+    const freezingCodes = [56, 57, 66, 67];
+    const snowCodes = [71, 73, 75, 77, 85, 86];
+    const rainCodes = [51, 53, 55, 61, 63, 65, 80, 81, 82];
+    const fogCodes = [45, 48];
+
+    if (freezingCodes.includes(code) || (temp <= 0 && precipitation > 0)) {
+        return {
+            level: "difficult",
+            icon: "🔴",
+            title: "Difficult conditions",
+            message: "Freezing rain can make sidewalks icy and slippery for cane and guide dog users."
+        };
+    }
+
+    if (snowCodes.includes(code)) {
+        return {
+            level: "difficult",
+            icon: "🔴",
+            title: "Difficult conditions",
+            message: "Snow can cover tactile paving and curb edges that blind pedestrians rely on."
+        };
+    }
+
+    // Codes 95 and above are thunderstorms.
+    if (code >= 95) {
+        return {
+            level: "difficult",
+            icon: "🔴",
+            title: "Difficult conditions",
+            message: "Thunderstorms make it hard to hear traffic at crossings."
+        };
+    }
+
+    if (rainCodes.includes(code)) {
+        return {
+            level: "caution",
+            icon: "🟡",
+            title: "Use caution",
+            message: "Rain noise can mask traffic sounds that many blind pedestrians use to judge crossings."
+        };
+    }
+
+    if (wind >= 40) {
+        return {
+            level: "caution",
+            icon: "🟡",
+            title: "Use caution",
+            message: "Strong wind can make it harder to hear traffic and keep balance."
+        };
+    }
+
+    if (fogCodes.includes(code)) {
+        return {
+            level: "caution",
+            icon: "🟡",
+            title: "Use caution",
+            message: "Fog reduces visibility for low-vision pedestrians."
+        };
+    }
+
+    return {
+        level: "good",
+        icon: "🟢",
+        title: "Good conditions",
+        message: "Dry and calm. Sidewalks are easier to navigate and traffic sounds are easier to hear."
+    };
 }

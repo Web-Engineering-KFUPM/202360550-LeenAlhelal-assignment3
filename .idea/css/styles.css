@@ -756,3 +756,183 @@ body {
         transition-duration: 0.01ms !important;
     }
 }
+
+
+/* ==========================================================================
+   ASSIGNMENT 3: PROJECT DETAIL POP-UPS + LIVE WEATHER
+   ========================================================================== */
+
+/* Colours for the three walking-condition levels, in each theme */
+:root {
+    --color-good: #2e7d32;
+    --color-caution: #a15c00;
+    --color-difficult: #c62828;
+}
+
+:root[data-theme="dark"] {
+    --color-good: #6fcf73;
+    --color-caution: #ffb74d;
+    --color-difficult: #ff6b6b;
+}
+
+
+/* ---------- "Learn more" button on each project card ---------- */
+
+.more-button {
+    align-self: flex-start;            /* same trick as .status-badge: no full-width stretch */
+    margin-top: auto;                  /* pushes the button to the bottom of the card */
+}
+
+
+/* ---------- Pop-up (<dialog>) ---------- */
+
+.project-dialog {
+    width: min(90vw, 50rem);           /* about half the screen on laptops, nearly full width on phones */
+    max-height: 85vh;                  /* long content scrolls inside the pop-up */
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+/* The dark layer behind the pop-up */
+.project-dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.dialog-inner {
+    padding: 2rem;
+}
+
+.dialog-inner h2 {
+    margin: 0;
+}
+
+.dialog-inner h3 {
+    margin: 1.5rem 0 0.5rem;
+}
+
+.dialog-inner p {
+    margin: 0;
+}
+
+.dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.dialog-close {
+    padding: 0.25rem 0.6rem;
+    border: none;
+    border-radius: 8px;
+    background: none;
+    color: var(--color-text);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.dialog-close:hover {
+    background-color: var(--color-hover-bg);
+}
+
+
+/* ---------- Weather panel ---------- */
+
+.weather-panel {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background-color: var(--color-bg);
+}
+
+.weather-panel h3 {
+    margin-top: 0;
+}
+
+/* The coloured box with the walking-condition message */
+.weather-status {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-left: 6px solid;
+    border-radius: 8px;
+    background-color: var(--color-surface);
+}
+
+.weather-status p + p {
+    margin-top: 0.25rem;
+}
+
+.weather-good {
+    border-color: var(--color-good);
+}
+
+.weather-caution {
+    border-color: var(--color-caution);
+}
+
+.weather-difficult {
+    border-color: var(--color-difficult);
+}
+
+.weather-status-title {
+    font-weight: 700;
+}
+
+/* Temperature / wind / precipitation tiles. auto-fit makes as many columns as fit. */
+.weather-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.weather-stats li {
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background-color: var(--color-surface);
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.stat-label,
+.weather-note,
+.weather-credit {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+}
+
+.dialog-inner .weather-note,
+.dialog-inner .weather-credit {
+    margin-top: 1rem;
+}
+
+.weather-error {
+    font-weight: 600;
+    color: var(--color-difficult);
+}
+
+/* High contrast: the status box gets a full outline, like the status badges */
+:root[data-contrast="high"] .weather-status {
+    border: 2px solid currentColor;
+    border-left-width: 6px;
+}
+
+@media (max-width: 600px) {
+    .dialog-inner {
+        padding: 1.25rem;
+    }
+}

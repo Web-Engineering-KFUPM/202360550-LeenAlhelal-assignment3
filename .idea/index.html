@@ -203,20 +203,17 @@
                         <h3 class="project-title">Accessibility-Aware Route Planner</h3>
                         <p class="project-description">
                             A software system designed to help blind and visually impaired
-                            pedestrians navigate outdoor environments in Boston, Massachussets by considering
+                            pedestrians navigate outdoor environments by considering
                             accessibility and safety factors such as sidewalk obstacles,
                             construction, difficult crossings, and challenging surfaces.
                         </p>
 
-                        <!-- Live Boston walking conditions. Filled in by loadWeather() in js/script.js -->
-                        <div id="weather-box" class="weather-box">
-                            <p id="weather-text" role="status" aria-live="polite">
-                                Loading Boston weather...
-                            </p>
-                            <p class="weather-credit">
-                                Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a>
-                            </p>
-                        </div>
+                        <!-- data-dialog holds the id of the pop-up this button opens (see js/script.js) -->
+                        <button class="button button-secondary more-button" type="button"
+                                data-dialog="route-planner-dialog"
+                                aria-label="Learn more about the Accessibility-Aware Route Planner">
+                            Learn more
+                        </button>
                     </div>
                 </article>
 
@@ -238,12 +235,82 @@
                             programming, graphical user interface development, and
                             database integration.
                         </p>
+
+                        <button class="button button-secondary more-button" type="button"
+                                data-dialog="gym-dialog"
+                                aria-label="Learn more about the Gym Management System">
+                            Learn more
+                        </button>
                     </div>
                 </article>
 
             </div>
         </div>
     </section>
+
+    <!-- ===================== PROJECT DETAIL POP-UPS ===================== -->
+    <!-- <dialog> is a built-in HTML pop-up. It is opened by the "Learn more" buttons (js/script.js) -->
+    <dialog id="route-planner-dialog" class="project-dialog" aria-labelledby="route-dialog-title">
+        <div class="dialog-inner">
+            <div class="dialog-header">
+                <h2 id="route-dialog-title">Accessibility-Aware Route Planner</h2>
+                <button class="dialog-close" type="button" aria-label="Close">✕</button>
+            </div>
+
+            <h3>The problem</h3>
+            <p>Blind pedestrians in Boston face barriers that make walking unsafe, such as broken sidewalks and
+                non-compliant curb ramps. Mainstream navigation apps make this worse: they prioritize the
+                fastest route, give little accessibility information, and are split across several complex apps. </p>
+
+            <h3>How it works</h3>
+            <p>The system models Boston's sidewalks as a weighted graph, where each sidewalk segment's weight is its distance.
+                Segments with barriers, such as damaged curb ramps, get extra penalties. Weather APIs also add penalties when
+                it's snowing. A shortest-path algorithm (A*) then picks the route with the lowest total weight, avoiding barriers
+                even if the route is slightly longer.</p>
+
+            <h3>Technologies</h3>
+            <ul>
+                <li>Mobile app: React Native (JavaScript), with built-in screen-reader support</li>
+                <li>Backend / API: Node.js and Express</li>
+                <li>Database: MongoDB, to store barrier and condition data</li>
+                <li>Routing: Python and NetworkX, to build the weighted graph and run A*</li>
+                <li>Map data: OpenStreetMap, for the sidewalk network</li>
+                <li>Weather: a weather API, such as the National Weather Service API, for snow conditions</li>
+            </ul>
+
+            <!-- Live weather demo. Filled in by loadWeather() in js/script.js -->
+            <section class="weather-panel" aria-labelledby="weather-title">
+                <h3 id="weather-title">Live demo: walking conditions in Boston</h3>
+                <div id="weather-content" aria-live="polite">
+                    <p>Loading Boston weather...</p>
+                </div>
+                <p class="weather-credit">
+                    Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a>
+                </p>
+            </section>
+        </div>
+    </dialog>
+
+    <dialog id="gym-dialog" class="project-dialog" aria-labelledby="gym-dialog-title">
+        <div class="dialog-inner">
+            <div class="dialog-header">
+                <h2 id="gym-dialog-title">Gym Management System</h2>
+                <button class="dialog-close" type="button" aria-label="Close">✕</button>
+            </div>
+
+            <h3>What it does</h3>
+            <p>A desktop application developed using JavaFX and SQL to manage gym operations and records.
+                The system organizes gym-related information through a graphical interface and database integration.</p>
+
+            <h3>What I learned</h3>
+            <ul>
+                <li>Applying object-oriented programming principles to structure and organize an application.</li>
+                <li>Developing graphical user interfaces using JavaFX.</li>
+                <li>Integrating SQL databases to store, retrieve, and manage data.</li>
+                <li>Connecting the application's interface with database operations.</li>
+            </ul>
+        </div>
+    </dialog>
 
     <!-- ===================== CONTACT ===================== -->
     <section id="contact" class="section section-alt" aria-labelledby="contact-title">
